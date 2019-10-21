@@ -1,0 +1,12 @@
+<form class="game-form">
+  <mat-form-field>
+    <mat-label class="game-link-label">Chat Link</mat-label>
+    <input #linkInput matInput disabled="true" class="game-link" placeholder="Favorite food" [value]="chatLink" />
+    <mat-icon (click)="copyLink(linkInput)" matSuffix class="copy-icon">file_copy</mat-icon>
+  </mat-form-field>
+
+  <label for="male">Chat vote time</label>
+  <mat-slider thumbLabel="true" color="primary" min="10" max="120" step="1" value="15" [displayWith]="formatThumb"></mat-slider>
+
+  <button color="primary" type="button" (click)="startGame()" mat-flat-button class="play-button">Start game</button>
+</form>
