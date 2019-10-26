@@ -13,7 +13,7 @@ export class LobbyComponent implements OnInit {
   constructor(private snackBar: MatSnackBar, private authService: AuthService) {}
 
   public ngOnInit(): void {
-    const { username } = this.authService.idToken;
+    const { username } = this.authService.token;
     const domain = window.location.hostname;
     this.chatLink = `${domain}/${username}`;
   }
@@ -38,6 +38,6 @@ export class LobbyComponent implements OnInit {
 
   public startGame(): void {
     console.log('test');
-    console.log(this.authService.idToken);
+    console.log(this.authService.token);
   }
 }

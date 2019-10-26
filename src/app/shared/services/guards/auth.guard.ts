@@ -9,13 +9,14 @@ export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
   public canActivate(): boolean {
-    const { accessTokenExpiration } = this.authService;
-    const currentTime = new Date().getTime();
+    const { token } = this.authService;
+    const currentTime = new Date().getTime() / 1000;
 
-    if (currentTime >= accessTokenExpiration) {
+    if (!token || currentTime > token.exp) {
       this.authService.logout();
       return false;
     }
+
     return true;
   }
 }
