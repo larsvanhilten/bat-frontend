@@ -1,0 +1,9 @@
+<div class="grid-container">
+  <ng-container *ngFor="let row of grid; let x = index">
+    <ng-container *ngFor="let cell of grid[x]; let y = index">
+      <div (click)="onCellClick(cell)" (mouseenter)="onCellEnter(cell)" (mouseleave)="onCellLeave(cell)" [ngClass]="decideClass(cell)">
+        {{ x }}/ {{ y }}
+      </div>
+    </ng-container>
+  </ng-container>
+</div>

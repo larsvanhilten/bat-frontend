@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [AppComponent, HomeComponent, LobbyComponent, AuthRedirectComponent],
@@ -26,7 +27,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MatIconModule,
     MatSliderModule,
     MatInputModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    SharedModule
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -33,7 +33,13 @@ export class AuthService {
 
   public onLogin(data): void {
     this.token = this.jwtHelperService.decodeToken(data.token);
+    localStorage.setItem('token', data.token);
   }
 
-  public initialize(): void {}
+  public initialize(): void {
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.token = this.jwtHelperService.decodeToken(token);
+    }
+  }
 }
