@@ -2,15 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
-  templateUrl: './lobby.component.html',
-  styleUrls: ['./lobby.component.scss']
+  templateUrl: './lobby-settings.component.html',
+  styleUrls: ['./lobby-settings.component.scss']
 })
-export class LobbyComponent implements OnInit {
+export class LobbySettingsComponent implements OnInit {
   public chatLink;
 
-  constructor(private snackBar: MatSnackBar, private authService: AuthService) {}
+  constructor(private snackBar: MatSnackBar, private authService: AuthService, private router: Router) {}
 
   public ngOnInit(): void {
     const { username } = this.authService.token;
@@ -33,11 +34,10 @@ export class LobbyComponent implements OnInit {
     document.execCommand('copy');
     selection.removeAllRanges();
 
-    this.snackBar.open('Link copied', null, { duration: 2 * 1000 });
+    this.snackBar.open('Link copied', null, { duration: 2 * 1000, verticalPosition: 'top' });
   }
 
   public startGame(): void {
-    console.log('test');
-    console.log(this.authService.token);
+    this.router.navigate(['lobby/placement']);
   }
 }

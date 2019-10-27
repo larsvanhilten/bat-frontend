@@ -1,0 +1,5 @@
+<div class="legenda-container">
+  <ng-container *ngFor="let ship of ships">
+    <div class="ship" (click)="onShipClick(ship)">{{ ship.length }}</div>
+  </ng-container>
+</div>

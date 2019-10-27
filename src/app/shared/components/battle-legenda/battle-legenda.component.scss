@@ -1,0 +1,14 @@
+.legenda-container {
+  width: 100%;
+  display: flex;
+}
+
+.ship {
+  width: 50px;
+  height: 50px;
+  border: 1px solid white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}

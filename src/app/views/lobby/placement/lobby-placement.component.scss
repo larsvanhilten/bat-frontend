@@ -1,0 +1,25 @@
+.placement-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.placement-container > * {
+  margin-top: 20px;
+}
+
+.start-button {
+  min-width: 50%;
+  position: absolute;
+  bottom: 100px;
+
+  @media only screen and (max-width: 768px) {
+    /* For mobile phones: */
+    min-width: 90%;
+    bottom: 20px;
+  }
+}

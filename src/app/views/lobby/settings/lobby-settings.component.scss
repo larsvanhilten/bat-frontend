@@ -1,0 +1,38 @@
+.game-form {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0 auto;
+  align-items: center;
+}
+
+.game-form > * {
+  margin-top: 20px;
+  min-width: 50%;
+
+  @media only screen and (max-width: 768px) {
+    /* For mobile phones: */
+    min-width: 90%;
+  }
+}
+
+.copy-icon {
+  cursor: pointer;
+}
+
+.game-link-label,
+.game-link {
+  color: white;
+}
+
+.next-button {
+  position: absolute;
+  bottom: 100px;
+
+  @media only screen and (max-width: 768px) {
+    /* For mobile phones: */
+    bottom: 20px;
+  }
+}

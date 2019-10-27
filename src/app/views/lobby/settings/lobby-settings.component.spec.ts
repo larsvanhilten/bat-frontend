@@ -1,6 +1,6 @@
 import { TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { LobbyComponent } from './lobby.component';
+import { LobbyComponent } from './lobby-settings.component';
 
 describe('LobbyComponent', () => {
   beforeEach(async(() => {
