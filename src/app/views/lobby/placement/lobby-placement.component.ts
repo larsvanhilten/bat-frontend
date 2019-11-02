@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
-import { Ship } from 'src/app/shared/components/battle-legenda/battle-legenda.component';
-import { GridCell } from 'src/app/shared/components/battle-grid/battle-grid.component';
+import { Ship, GridCell } from 'src/app/shared/components/battle-grid/battle-grid.component';
 
 @Component({
   templateUrl: './lobby-placement.component.html',
@@ -11,32 +10,47 @@ import { GridCell } from 'src/app/shared/components/battle-grid/battle-grid.comp
 })
 export class LobbyPlacementComponent implements OnInit {
   public selectLength = 0;
-  public ships = [
-    { length: 6 },
-    { length: 4 },
-    { length: 4 },
-    { length: 3 },
-    { length: 3 },
-    { length: 3 },
-    { length: 2 },
-    { length: 2 },
-    { length: 2 },
-    { length: 2 }
-  ];
+  public ships = [6, 4, 4, 3, 3, 3, 2, 2, 2, 2];
+  public grid = [];
 
   constructor(private snackBar: MatSnackBar, private authService: AuthService) {}
 
   public ngOnInit(): void {}
 
-  public startGame(): void {}
-
-  public shipPlaced(cells: GridCell[]): void {
-    this.selectLength = 0;
-    const index = this.ships.findIndex((ship) => ship.length === this.selectLength);
-    this.ships.splice(index, 1);
+  public startGame(): void {
+    const serializedGrid = this.serializeGrid();
+    console.log(serializedGrid);
   }
 
-  public shipSelected(ship: Ship): void {
-    this.selectLength = ship.length;
+  public shipPlaced(placedShip: Ship): void {
+    const index = this.ships.findIndex((shipLength) => shipLength === placedShip.length);
+    this.ships.splice(index, 1);
+    this.selectLength = 0;
+  }
+
+  public shipRemoved(removedShip: Ship): void {
+    this.ships.push(removedShip.length);
+    this.ships.sort((a, b) => b - a);
+  }
+
+  public shipSelected(shipLength: number): void {
+    this.selectLength = shipLength;
+  }
+
+  private serializeGrid(): void {
+    const grid = Object.create(this.grid);
+
+    // Remove first and last row (number/alphabet cells)
+    grid.splice(0, 1);
+    grid.splice(grid.length - 1, 1);
+
+    return grid.map((row) => {
+      return row.map((cell: GridCell) => {
+        if (!cell.ship) {
+          return 0;
+        }
+        return cell.ship.length;
+      });
+    });
   }
 }

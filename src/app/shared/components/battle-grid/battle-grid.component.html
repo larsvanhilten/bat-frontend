@@ -2,9 +2,12 @@
   <ng-container *ngFor="let row of grid; let x = index">
     <ng-container *ngFor="let cell of grid[x]; let y = index">
       <ng-container *ngIf="isCell(cell)">
-        <div (click)="onCellClick(cell)" (mouseenter)="onCellEnter(cell)" (mouseleave)="onCellLeave(cell)" [ngClass]="decideClass(cell)">
-          {{ cell.x }} / {{ cell.y }}
-        </div>
+        <div
+          (click)="onCellClick(cell)"
+          (mouseenter)="onCellEnter(cell)"
+          (mouseleave)="onCellLeave(cell)"
+          [ngClass]="decideClass(cell)"
+        ></div>
       </ng-container>
       <ng-container *ngIf="!isCell(cell)">
         <div class="cell">{{ cell.text }}</div>

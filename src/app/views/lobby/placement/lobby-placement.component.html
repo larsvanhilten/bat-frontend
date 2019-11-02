@@ -1,5 +1,11 @@
 <div class="placement-container">
   <app-battle-legenda (shipSelected)="shipSelected($event)" [ships]="ships"></app-battle-legenda>
-  <app-battle-grid [selectLength]="selectLength" (shipPlaced)="shipPlaced($event)" class="grid"></app-battle-grid>
+  <app-battle-grid
+    [grid]="grid"
+    [selectLength]="selectLength"
+    (shipRemoved)="shipRemoved($event)"
+    (shipPlaced)="shipPlaced($event)"
+    class="grid"
+  ></app-battle-grid>
   <button color="primary" type="button" (click)="startGame()" mat-flat-button class="start-button">Start game</button>
 </div>

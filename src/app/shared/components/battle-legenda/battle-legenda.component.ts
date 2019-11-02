@@ -1,24 +1,21 @@
 import { Component, OnInit, Output, Input } from '@angular/core';
 import { EventEmitter } from '@angular/core';
 
-export interface Ship {
-  length: number;
-}
-
 @Component({
   selector: 'app-battle-legenda',
   templateUrl: './battle-legenda.component.html',
   styleUrls: ['./battle-legenda.component.scss']
 })
 export class BattleLegendaComponent implements OnInit {
-  @Input() public ships: Ship[];
-  @Output() public shipSelected: EventEmitter<Ship> = new EventEmitter();
+  @Input() public ships: number[];
+  @Output() public shipSelected: EventEmitter<number> = new EventEmitter();
 
   constructor() {}
 
   public ngOnInit(): void {}
 
-  public onShipClick(ship: Ship): void {
-    this.shipSelected.emit(ship);
+  public onShipClick(shipLength: number): void {
+    console.log(shipLength);
+    this.shipSelected.emit(shipLength);
   }
 }

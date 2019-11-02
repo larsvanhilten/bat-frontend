@@ -1,10 +1,15 @@
 import { Component, OnInit, Input, HostListener, Output } from '@angular/core';
 import { EventEmitter } from '@angular/core';
 
+export interface Ship {
+  length: number;
+  cells: GridCell[];
+}
+
 export interface GridCell {
   isSelected: boolean;
   text?: string;
-  value?: string;
+  ship?: Ship;
   x: number;
   y: number;
 }
@@ -15,10 +20,14 @@ export interface GridCell {
   styleUrls: ['./battle-grid.component.scss']
 })
 export class BattleGridComponent implements OnInit {
-  @Input() public grid = [];
-  @Input() private selectLength = 2;
+  public ships = [];
+  public serializedGrid;
 
-  @Output() public shipPlaced: EventEmitter<GridCell[]> = new EventEmitter();
+  @Input() public grid = [];
+  @Input() public selectLength = 2;
+
+  @Output() public shipPlaced: EventEmitter<Ship> = new EventEmitter();
+  @Output() public shipRemoved: EventEmitter<Ship> = new EventEmitter();
 
   private selectIsHorizontal = true;
   private currentCell;
@@ -60,6 +69,14 @@ export class BattleGridComponent implements OnInit {
   }
 
   public onCellClick(cell: GridCell): void {
+    if (!cell.ship && this.selectLength !== 0) {
+      this.placeShip(cell);
+    } else if (cell.ship && this.selectLength === 0) {
+      this.removeShip(cell.ship);
+    }
+  }
+
+  private placeShip(cell: GridCell): void {
     let cells = [];
     if (this.selectIsHorizontal) {
       cells = this.getHorizontalNeighbours(cell);
@@ -67,11 +84,22 @@ export class BattleGridComponent implements OnInit {
       cells = this.getVerticalNeighbours(cell);
     }
 
-    if (cells.length === this.selectLength && this.selectLength !== 0 && !cell.value) {
+    if (cells && cells.length === this.selectLength && !this.cellsContainShip(cells)) {
+      const ship: Ship = { cells, length: this.selectLength };
+      cells.map((c) => (c.ship = ship));
+      this.ships.push(ship);
+      this.shipPlaced.emit(ship);
       this.unselectCells(cell);
-      cells.map((c) => (c.value = this.selectLength));
-      this.shipPlaced.emit(cells);
     }
+  }
+
+  private cellsContainShip(cells: GridCell[]): boolean {
+    return !!cells.find((cell) => !!cell.ship);
+  }
+
+  private removeShip(ship: Ship): void {
+    ship.cells.map((cell) => (cell.ship = null));
+    this.shipRemoved.emit(ship);
   }
 
   public onCellEnter(cell: GridCell): void {
@@ -90,8 +118,8 @@ export class BattleGridComponent implements OnInit {
       cellClass = cellClass.concat(' ', 'hover');
     }
 
-    if (cell && cell.value) {
-      cellClass = cellClass.concat(' ', `size-${cell.value}`);
+    if (cell && cell.ship) {
+      cellClass = cellClass.concat(' ', `size-${cell.ship.length}`);
     }
     return cellClass;
   }
