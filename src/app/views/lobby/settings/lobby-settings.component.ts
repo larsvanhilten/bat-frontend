@@ -33,8 +33,7 @@ export class LobbySettingsComponent implements OnInit {
 
     document.execCommand('copy');
     selection.removeAllRanges();
-
-    this.snackBar.open('Link copied', null, { duration: 2 * 1000, verticalPosition: 'top' });
+    this.snackBar.open('Link copied');
   }
 
   public startGame(): void {

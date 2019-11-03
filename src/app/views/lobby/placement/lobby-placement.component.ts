@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
-
-import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { Ship, GridCell } from 'src/app/shared/components/battle-grid/battle-grid.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   templateUrl: './lobby-placement.component.html',
@@ -13,13 +11,17 @@ export class LobbyPlacementComponent implements OnInit {
   public ships = [6, 4, 4, 3, 3, 3, 2, 2, 2, 2];
   public grid = [];
 
-  constructor(private snackBar: MatSnackBar, private authService: AuthService) {}
+  constructor(private snackBar: MatSnackBar) {}
 
   public ngOnInit(): void {}
 
   public startGame(): void {
+    if (this.ships.length !== 0) {
+      this.snackBar.open('Please place all your ships');
+      return;
+    }
+
     const serializedGrid = this.serializeGrid();
-    console.log(serializedGrid);
   }
 
   public shipPlaced(placedShip: Ship): void {
@@ -37,15 +39,13 @@ export class LobbyPlacementComponent implements OnInit {
     this.selectLength = shipLength;
   }
 
-  private serializeGrid(): void {
-    const grid = Object.create(this.grid);
-
+  private serializeGrid(): number[][] {
     // Remove first and last row (number/alphabet cells)
+    const grid = this.grid.map((row) => row.filter((cell, index) => index !== 0));
     grid.splice(0, 1);
-    grid.splice(grid.length - 1, 1);
 
     return grid.map((row) => {
-      return row.map((cell: GridCell) => {
+      return row.map((cell: GridCell, index: number) => {
         if (!cell.ship) {
           return 0;
         }

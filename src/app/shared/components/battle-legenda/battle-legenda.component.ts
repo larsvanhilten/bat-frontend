@@ -15,7 +15,6 @@ export class BattleLegendaComponent implements OnInit {
   public ngOnInit(): void {}
 
   public onShipClick(shipLength: number): void {
-    console.log(shipLength);
     this.shipSelected.emit(shipLength);
   }
 }
