@@ -6,7 +6,8 @@ export const environment = {
   production: false,
   client_id: 'ov5ogpi8j2tvmcub8u6sfmwtzdtkjj',
   redirect_uri: 'http://localhost:4200/auth',
-  auth_service: 'http://localhost:4000'
+  auth_service: 'http://localhost:4000',
+  logic_service: 'http://localhost:5000'
 };
 
 /*

@@ -1,15 +1,19 @@
-import { Component, OnInit, Input, HostListener, Output } from '@angular/core';
+import { Component, OnInit, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { EventEmitter } from '@angular/core';
 
 export interface Ship {
   length: number;
   cells: GridCell[];
+  start: number;
+  isHorizontal: boolean;
 }
 
 export interface GridCell {
   isSelected: boolean;
   text?: string;
   ship?: Ship;
+  isHit?: boolean;
+  isMiss?: boolean;
   x: number;
   y: number;
 }
@@ -19,42 +23,49 @@ export interface GridCell {
   templateUrl: './battle-grid.component.html',
   styleUrls: ['./battle-grid.component.scss']
 })
-export class BattleGridComponent implements OnInit {
-  public ships = [];
-  public serializedGrid;
-
+export class BattleGridComponent implements OnInit, OnChanges {
   @Input() public grid = [];
   @Input() public selectLength = 2;
+  @Input() public placeHorizontal = true;
 
   @Output() public shipPlaced: EventEmitter<Ship> = new EventEmitter();
   @Output() public shipRemoved: EventEmitter<Ship> = new EventEmitter();
+  @Output() public fire: EventEmitter<GridCell> = new EventEmitter();
 
-  private selectIsHorizontal = true;
-  private currentCell;
-
-  constructor() {}
+  private currentCell: GridCell;
 
   public ngOnInit(): void {
-    this.createGrid(11, 11);
+    console.log(this.grid);
+    if (this.grid.length === 0) {
+      this.createGrid(11, 11);
+    }
+  }
+
+  public ngOnChanges(changes: SimpleChanges): void {
+    const { placeHorizontal } = changes;
+
+    if (placeHorizontal && placeHorizontal.previousValue !== placeHorizontal.currentValue) {
+      this.rotateShip();
+    }
   }
 
   private createGrid(x, y): void {
     for (let i = 0; i < x; i++) {
       this.grid[i] = [];
       for (let j = 0; j < y; j++) {
-        const cell: GridCell = { isSelected: false, x: i, y: j, text: this.decideCellText(i, j) };
+        const cell: GridCell = { isSelected: false, x: j, y: i, text: this.decideCellText(j, i) };
         this.grid[i][j] = cell;
       }
     }
   }
 
   private decideCellText(x, y): string {
-    if (x !== 0 && y === 0) {
-      return x.toString();
+    if (x === 0 && y !== 0) {
+      return y.toString();
     }
 
-    if (x === 0 && y !== 0) {
-      return String.fromCharCode(97 + (y - 1)).toUpperCase();
+    if (x !== 0 && y === 0) {
+      return String.fromCharCode(97 + (x - 1)).toUpperCase();
     }
 
     if (x === 0 && y === 0) {
@@ -69,6 +80,11 @@ export class BattleGridComponent implements OnInit {
   }
 
   public onCellClick(cell: GridCell): void {
+    if (this.selectLength === 1 && !cell.text) {
+      this.fire.emit(cell);
+      return;
+    }
+
     if (!cell.ship && this.selectLength !== 0) {
       this.placeShip(cell);
     } else if (cell.ship && this.selectLength === 0) {
@@ -78,18 +94,25 @@ export class BattleGridComponent implements OnInit {
 
   private placeShip(cell: GridCell): void {
     let cells = [];
-    if (this.selectIsHorizontal) {
+    if (this.placeHorizontal) {
       cells = this.getHorizontalNeighbours(cell);
     } else {
       cells = this.getVerticalNeighbours(cell);
     }
 
     if (cells && cells.length === this.selectLength && !this.cellsContainShip(cells)) {
-      const ship: Ship = { cells, length: this.selectLength };
+      const ship: Ship = { cells, length: this.selectLength, start: 10, isHorizontal: this.placeHorizontal };
+
+      if (ship.isHorizontal) {
+        ship.start = cell.x - (ship.length - 1);
+      } else {
+        ship.start = cell.y - (ship.length - 1);
+      }
+
       cells.map((c) => (c.ship = ship));
-      this.ships.push(ship);
+
       this.shipPlaced.emit(ship);
-      this.unselectCells(cell);
+      this.unselectCells(cell, this.placeHorizontal);
     }
   }
 
@@ -104,12 +127,17 @@ export class BattleGridComponent implements OnInit {
 
   public onCellEnter(cell: GridCell): void {
     this.currentCell = cell;
-    this.selectCells(cell);
+    this.selectCells(cell, this.placeHorizontal);
   }
 
   public onCellLeave(cell: GridCell): void {
     this.currentCell = null;
-    this.unselectCells(cell);
+    this.unselectCells(cell, this.placeHorizontal);
+  }
+
+  private rotateShip(): void {
+    this.unselectCells(this.currentCell, !this.placeHorizontal);
+    this.selectCells(this.currentCell, this.placeHorizontal);
   }
 
   public decideClass(cell: GridCell): string {
@@ -124,9 +152,9 @@ export class BattleGridComponent implements OnInit {
     return cellClass;
   }
 
-  private selectCells(cell: GridCell): void {
+  private selectCells(cell: GridCell, placeHorizontal: boolean): void {
     let cells = [];
-    if (this.selectIsHorizontal) {
+    if (placeHorizontal) {
       cells = this.getHorizontalNeighbours(cell);
     } else {
       cells = this.getVerticalNeighbours(cell);
@@ -134,9 +162,9 @@ export class BattleGridComponent implements OnInit {
     cells.map((c) => (c.isSelected = true));
   }
 
-  private unselectCells(cell: GridCell): void {
+  private unselectCells(cell: GridCell, placeHorizontal: boolean): void {
     let cells = [];
-    if (this.selectIsHorizontal) {
+    if (placeHorizontal) {
       cells = this.getHorizontalNeighbours(cell);
     } else {
       cells = this.getVerticalNeighbours(cell);
@@ -144,16 +172,7 @@ export class BattleGridComponent implements OnInit {
     cells.map((c) => (c.isSelected = false));
   }
 
-  @HostListener('document:keypress', ['$event'])
-  private handleKeyboardEvent(event: KeyboardEvent): void {
-    if (event.key.toLowerCase() === 'r') {
-      this.unselectCells(this.currentCell);
-      this.selectIsHorizontal = !this.selectIsHorizontal;
-      this.selectCells(this.currentCell);
-    }
-  }
-
-  private getVerticalNeighbours(cell): GridCell[] {
+  private getHorizontalNeighbours(cell): GridCell[] {
     if (!cell) {
       return [];
     }
@@ -171,7 +190,7 @@ export class BattleGridComponent implements OnInit {
 
     const cells = [];
     for (let i = xMin; i < xMax; i++) {
-      const c: GridCell = this.grid[i][y];
+      const c: GridCell = this.grid[y][i];
       if (c && !c.text) {
         cells.push(c);
       }
@@ -179,7 +198,7 @@ export class BattleGridComponent implements OnInit {
     return cells;
   }
 
-  private getHorizontalNeighbours(cell): GridCell[] {
+  private getVerticalNeighbours(cell): GridCell[] {
     if (!cell) {
       return [];
     }
@@ -197,7 +216,7 @@ export class BattleGridComponent implements OnInit {
 
     const cells = [];
     for (let i = yMin; i < yMax; i++) {
-      const c: GridCell = this.grid[x][i];
+      const c: GridCell = this.grid[i][x];
       if (c && !c.text) {
         cells.push(c);
       }

@@ -3,6 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { Router } from '@angular/router';
+import { MatSliderChange } from '@angular/material/slider';
 
 @Component({
   templateUrl: './lobby-settings.component.html',
@@ -10,6 +11,7 @@ import { Router } from '@angular/router';
 })
 export class LobbySettingsComponent implements OnInit {
   public chatLink;
+  public chatVoteTime = 15;
 
   constructor(private snackBar: MatSnackBar, private authService: AuthService, private router: Router) {}
 
@@ -36,7 +38,11 @@ export class LobbySettingsComponent implements OnInit {
     this.snackBar.open('Link copied');
   }
 
-  public startGame(): void {
-    this.router.navigate(['lobby/placement']);
+  public onSliderChange(sliderChange: MatSliderChange): void {
+    this.chatVoteTime = sliderChange.value;
+  }
+
+  public next(): void {
+    this.router.navigate(['lobby/placement', { chatVoteTime: this.chatVoteTime }]);
   }
 }

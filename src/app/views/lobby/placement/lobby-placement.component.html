@@ -1,8 +1,9 @@
 <div class="placement-container">
-  <app-battle-legenda (shipSelected)="shipSelected($event)" [ships]="ships"></app-battle-legenda>
+  <app-ship-legenda (shipSelected)="shipSelected($event)" [ships]="ships"></app-ship-legenda>
   <app-battle-grid
     [grid]="grid"
     [selectLength]="selectLength"
+    [placeHorizontal]="placeHorizontal"
     (shipRemoved)="shipRemoved($event)"
     (shipPlaced)="shipPlaced($event)"
     class="grid"

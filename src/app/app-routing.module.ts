@@ -4,6 +4,7 @@ import { HomeComponent } from './views/home/home.component';
 import { LobbySettingsComponent } from './views/lobby/settings/lobby-settings.component';
 import { LobbyPlacementComponent } from './views/lobby/placement/lobby-placement.component';
 import { AuthRedirectComponent } from './views/auth-redirect/auth-redirect.component';
+import { GameComponent } from './views/game/game.component';
 import { AuthGuard } from './shared/services/guards/auth.guard';
 
 const routes: Routes = [
@@ -18,6 +19,7 @@ const routes: Routes = [
       { path: 'placement', component: LobbyPlacementComponent, canActivate: [AuthGuard] }
     ]
   },
+  { path: 'game/:username', component: GameComponent },
   { path: '**', redirectTo: '' }
 ];
 

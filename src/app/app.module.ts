@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './views/home/home.component';
+import { GameComponent } from './views/game/game.component';
 import { LobbySettingsComponent } from './views/lobby/settings/lobby-settings.component';
 import { LobbyPlacementComponent } from './views/lobby/placement/lobby-placement.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -17,7 +18,7 @@ import { MatSnackBarModule, MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/mater
 import { SharedModule } from './shared/shared.module';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, LobbySettingsComponent, LobbyPlacementComponent, AuthRedirectComponent],
+  declarations: [AppComponent, HomeComponent, GameComponent, LobbySettingsComponent, LobbyPlacementComponent, AuthRedirectComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
